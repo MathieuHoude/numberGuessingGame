@@ -1,21 +1,24 @@
+require 'json'
+require 'uri'
+require 'net/http'
+require 'openssl'
 require 'httparty'
 
 def play_game(difficulty)
-	limit = 0
 	case difficulty
-		when "VeryEasy"
+		when "veryeasy"
 			limit = 10
 			max_nb_tries = 1000000
-		when "Easy"
+		when "easy"
 			limit = 10
 			max_nb_tries = 5
-		when "Medium"
+		when "medium"
 			limit = 100
 			max_nb_tries = 5
-		when "Hard"
+		when "hard"
 			limit = 500
 			max_nb_tries = 8
-		when "VeryHard"
+		when "veryHard"
 			limit = 1000
 			max_nb_tries = 9
 	end
@@ -56,30 +59,55 @@ def start_guessing(good_number, max_nb_tries)
 end
 
 def main_game
-	difficulties = %w(VeryEasy Easy Medium Hard VeryHard)
+	difficulties = %w(veryeasy easy medium hard veryHard)
+	ascii_art("Number+Guessing+Game")
 	puts "Hello, please enter your name."
 	name = gets.chomp
-	response = HTTParty.get("http://artii.herokuapp.com/make?text=Hi+#{name}!")
-	puts response.body
-	puts "Welcome to this fabulous number guessing game."
-	continue_playing = true
+	if is_bad(name)
+		puts "That's rude. You don't deserve to play this game. Goodbye."
+	else
+		ascii_art("Hi #{name}!")
+		puts "Welcome to this fabulous number guessing game."
+		continue_playing = true
 
-	while continue_playing
-		puts "Please choose a difficulty level (VeryEasy / Easy / Medium / Hard / VeryHard)"
-		difficulty = gets.chomp
-		if  !(difficulties.include?(difficulty))
-			puts "Invalid input"
-		else
-			results = play_game(difficulty)
-			results["answer_found"] ? (puts "Good job!") : (puts "You're out of tries! The number we were looking for was #{results["good_number"]}")
-			puts "Wanna play again? (Yes/No)"
-			answer = gets.chomp
-			continue_playing = false if answer == "No"
-		end			
+		while continue_playing
+			puts "Please choose a difficulty level (VeryEasy / Easy / Medium / Hard / VeryHard)"
+			difficulty = gets.chomp.gsub(/\s+/, "").downcase
+			if  !(difficulties.include?(difficulty))
+				puts "Invalid input"
+			else
+				results = play_game(difficulty)
+				results["answer_found"] ? (puts "Good job!") : (puts "You're out of tries! The number we were looking for was #{results["good_number"]}")
+				puts "Wanna play again? (Yes/No)"
+				answer = gets.chomp.downcase
+				continue_playing = false if answer == "no"
+			end			
+		end
+		response = HTTParty.get('http://artii.herokuapp.com/make?text=Thank+you+for+playing!')
+		puts response.body
 	end
-	puts "Thank you for playing!"
 end
 
-response = HTTParty.get('http://artii.herokuapp.com/make?text=Number+Guessing+Game')
-puts response.body
+def is_bad(text)
+	url = URI("https://neutrinoapi-bad-word-filter.p.rapidapi.com/bad-word-filter")
+
+	http = Net::HTTP.new(url.host, url.port)
+	http.use_ssl = true
+	http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+	request = Net::HTTP::Post.new(url)
+	request["x-rapidapi-host"] = 'neutrinoapi-bad-word-filter.p.rapidapi.com'
+	request["x-rapidapi-key"] = '3122280cf7msh59381a1f1cb7152p1216fcjsn71b26972e51c'
+	request["content-type"] = 'application/x-www-form-urlencoded'
+	request.body = "censor-character=*&content=#{text}"
+
+	response = http.request(request)
+	is_bad =  JSON.parse(response.body)["is-bad"]
+end
+
+def ascii_art(text)
+	response = HTTParty.get("http://artii.herokuapp.com/make?text=#{text}")
+	puts response.body
+end
+
 main_game
