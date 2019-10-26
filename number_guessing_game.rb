@@ -1,3 +1,5 @@
+require 'httparty'
+
 def play_game(difficulty)
 	limit = 0
 	case difficulty
@@ -57,7 +59,9 @@ def main_game
 	difficulties = %w(VeryEasy Easy Medium Hard VeryHard)
 	puts "Hello, please enter your name."
 	name = gets.chomp
-	puts "Hello #{name}, welcome to this fabulous number guessing game."
+	response = HTTParty.get("http://artii.herokuapp.com/make?text=Hi+#{name}!")
+	puts response.body
+	puts "Welcome to this fabulous number guessing game."
 	continue_playing = true
 
 	while continue_playing
@@ -76,4 +80,6 @@ def main_game
 	puts "Thank you for playing!"
 end
 
+response = HTTParty.get('http://artii.herokuapp.com/make?text=Number+Guessing+Game')
+puts response.body
 main_game
