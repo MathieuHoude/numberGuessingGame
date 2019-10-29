@@ -18,7 +18,7 @@ def play_game(difficulty)
 		when "hard"
 			limit = 500
 			max_nb_tries = 8
-		when "veryHard"
+		when "veryhard"
 			limit = 1000
 			max_nb_tries = 9
 	end
@@ -59,7 +59,7 @@ def start_guessing(good_number, max_nb_tries)
 end
 
 def main_game
-	difficulties = %w(veryeasy easy medium hard veryHard)
+	difficulties = %w(veryeasy easy medium hard veryhard)
 	ascii_art("Number+Guessing+Game")
 	puts "Hello, please enter your name."
 	name = gets.chomp
