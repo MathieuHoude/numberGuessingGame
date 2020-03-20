@@ -6,19 +6,19 @@ require 'httparty'
 
 def play_game(difficulty)
 	case difficulty
-		when "veryeasy"
+		when "veryeasy", "1"
 			limit = 10
 			max_nb_tries = 1000000
-		when "easy"
+		when "easy", "2"
 			limit = 10
 			max_nb_tries = 5
-		when "medium"
+		when "medium", "3"
 			limit = 100
 			max_nb_tries = 5
-		when "hard"
+		when "hard", "4"
 			limit = 500
 			max_nb_tries = 8
-		when "veryhard"
+		when "veryhard", "5"
 			limit = 1000
 			max_nb_tries = 9
 	end
@@ -59,19 +59,19 @@ def start_guessing(good_number, max_nb_tries)
 end
 
 def main_game
-	difficulties = %w(veryeasy easy medium hard veryhard)
+	difficulties = %w(1 veryeasy 2 easy 3 medium 4 hard 5 veryhard)
 	ascii_art("Number+Guessing+Game")
-	puts "Hello, please enter your name."
+	puts "Welcome to this fabulous number guessing game."
+	puts "Please enter your name:"
 	name = gets.chomp
 	if is_bad(name)
 		puts "That's rude. You don't deserve to play this game. Goodbye."
 	else
 		ascii_art("Hi #{name}!")
-		puts "Welcome to this fabulous number guessing game."
 		continue_playing = true
 
 		while continue_playing
-			puts "Please choose a difficulty level (VeryEasy / Easy / Medium / Hard / VeryHard)"
+			puts "Please choose a difficulty level (1 = VeryEasy / 2 = Easy / 3 = Medium / 4 = Hard / 5 = VeryHard)"
 			difficulty = gets.chomp.gsub(/\s+/, "").downcase
 			if  !(difficulties.include?(difficulty))
 				puts "Invalid input"
