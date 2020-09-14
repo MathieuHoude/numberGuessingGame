@@ -1,0 +1,74 @@
+SEQUENCE start_guessing USING number_to_find AND max_nb_tries
+    SET guess TO 0
+    SET nb_tries TO 0
+    SET answer_was_found TO false
+    DISPLAY You can start guessing
+    WHILE nb_tries IS LESS THAN max_nb_tries
+        IF guess IS NOT EQUAL TO number_to_find
+            SET guess TO READ user input
+            IF guess IS NULL OR IS NOT a number
+                DISPLAY 'Invalid input'
+            ELSE
+                INCREMENT nb_tries
+                IF nb_tries IS NOT EQUAL TO max_nb_tries
+                    DISPLAY 'Higher IF guess IS LESS THAN number_to_find'
+                    DISPLAY 'Lower IF guess IS GREATER THAN number_to_find'
+                ENDIF
+            ENDIF
+        ELSE    
+            BREAK
+    ENDWHILE
+    SET answer_was_found TO true IF guess IS EQUAL TO number_to_find
+ENDSEQUENCE
+
+SEQUENCE new_game USING limit AND max_nb_tries 
+    SET number_to_find TO random number between 1 and limit
+    CALL start_guessing WITH number_to_find AND max_nb_tries RETURNING answer_was_found
+    RETURN answer_was_found AND number_to_find
+ENDSEQUENCE
+
+SEQUENCE play_game USING difficulty_level
+    CASE difficulty_level OF
+        veryeasy OR 1: 
+            SET limit TO 10
+            SET max_nb_tries TO 1000000
+        easy OR 2:
+            SET limit TO 10
+            SET max_nb_tries TO 5
+        medium OR 3:
+            SET limit TO 100
+            SET max_nb_tries TO 5
+        hard OR 4:
+            SET limit TO 500
+            SET max_nb_tries TO 8
+        veryhard:
+            SET limit TO 1000
+            SET max_nb_tries TO 9
+    ENDCASE
+    CALL new_game WITH limit AND max_nb_tries RETURNING answer_was_found AND number_to_find
+    RETURN answer_found AND number_to_find
+ENDSEQUENCE
+
+SEQUENCE main_game
+    SET difficulties TO ARRAY WITH 1,veryeasy,2,easy,3,medium,4,hard,5,veryhard
+    SET continue_playing TO true
+    DISPLAY 'Welcome to this fabulous number guessing game.'
+    WHILE continue_playing
+        DISPLAY 'Please choose a difficulty level (1 = VeryEasy / 2 = Easy / 3 = Medium / 4 = Hard / 5 = VeryHard)'
+        SET difficulty TO READ downcased user input
+        IF difficulty IS NOT INCLUDED IN difficulties
+            DISPLAY 'Invalid input'
+        ELSE
+            CALL play_game WITH difficulty RETURNING answer_was_found AND number_to_find
+            IF answer_was_found
+                DISPLAY 'Good job!'
+            ELSE    
+                DISPLAY 'You're out of tries! The number we were looking for was "number_to_find"'
+            DISPLAY 'Wanna play again? (Yes/No)'
+            SET answer To READ downcased user input
+            SET continue_playing TO false IF answer IS EQUAL TO no
+        ENDIF
+        DISPLAY 'Thank you for playing'
+ENDSEQUENCE
+
+CALL main_game
