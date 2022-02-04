@@ -10,7 +10,7 @@ SEQUENCE start_guessing USING number_to_find AND limit AND max_nb_tries
                 DISPLAY 'Invalid input'
             ELSE
                 INCREMENT nb_tries
-                IF nb_tries IS NOT GREATER THAN max_nb_tries
+                IF nb_tries IS NOT EQUAL TO max_nb_tries
                     DISPLAY Higher IF guess IS LESS THAN number_to_find
                     DISPLAY Lower IF guess IS GREATER THAN number_to_find
                 ELSE    
