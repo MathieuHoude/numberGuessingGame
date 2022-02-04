@@ -49,7 +49,7 @@ SEQUENCE play_game USING difficulty_level
     RETURN answer_found AND number_to_find
 ENDSEQUENCE
 
-SEQUENCE main_game
+SEQUENCE main
     SET difficulties TO ARRAY WITH 1,veryeasy,2,easy,3,medium,4,hard,5,veryhard
     SET continue_playing TO true
     DISPLAY 'Welcome to this fabulous number guessing game.'
@@ -71,4 +71,4 @@ SEQUENCE main_game
         DISPLAY 'Thank you for playing'
 ENDSEQUENCE
 
-CALL main_game
+CALL main
