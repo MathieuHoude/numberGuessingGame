@@ -5,9 +5,8 @@ const start_guessing = (number_to_find, limit, max_nb_tries) => {
     let answer_was_found = false;
     console.log(`You can start guessing! The number is between 1 and ${limit}. You have ${max_nb_tries} tries.`)
     while (!answer_was_found) {
-        if (guess != 5) {
+        if (guess != number_to_find) {
             guess = parseInt(prompt('Guess: '));
-            console.log(guess)
             if (isNaN(guess)) {
                 console.log("Invalid input!");
             } else {
@@ -23,6 +22,7 @@ const start_guessing = (number_to_find, limit, max_nb_tries) => {
             answer_was_found = true;
         }
     }
+    if (guess == number_to_find) answer_was_found = true;
     return answer_was_found;
 }
 
